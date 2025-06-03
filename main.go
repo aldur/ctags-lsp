@@ -967,20 +967,21 @@ func filepathToURI(path string) string {
 // scanWorkspace scans all files in the root path
 func (s *Server) scanWorkspace() error {
 	var cmd *exec.Cmd
+	consumerArgs := []string{"--output-format=json", "--fields=+n", "-L", "-"}
 
 	// Respect gitignore, fallback to all files
 	if isGitRepo(s.rootPath) {
 		// Use `git ls-files` to generate file list and pipe to ctags
-		cmd = pipeCommand("git", []string{"ls-files"}, "ctags", []string{"--output-format=json", "--fields=+n", "-L", "-"})
+		cmd = pipeCommand("git", []string{"-C", s.rootPath, "ls-files"}, "ctags", consumerArgs)
 	} else if isJjRepo(s.rootPath) {
 		// Use `jj file list` to generate file list and pipe to ctags
-		cmd = pipeCommand("jj", []string{"file", "list", "--repository", "."}, "ctags", []string{"--output-format=json", "--fields=+n", "-L", "-"})
+		cmd = pipeCommand("jj", []string{"file", "list", "--repository", s.rootPath}, "ctags", consumerArgs)
 	} else {
 		// Fallback to `ctags -R`
 		cmd = exec.Command("ctags", "--output-format=json", "--fields=+n", "-R")
-		cmd.Dir = s.rootPath
 	}
 
+	cmd.Dir = s.rootPath
 	return s.processTagsOutput(cmd)
 }
 
