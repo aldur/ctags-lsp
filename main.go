@@ -769,11 +769,7 @@ func handleWorkspaceSymbol(server *Server, req RPCRequest) {
 
 	for _, entry := range server.tagEntries {
 		if entry.Name == query {
-			kind, err := GetLSPSymbolKind(entry.Kind)
-			if err != nil {
-				// This tag has no symbol kind, skip
-				continue
-			}
+			kind := GetLSPSymbolKind(entry.Kind)
 			filePath := filepath.Join(server.rootPath, entry.Path)
 			uri := filepathToURI(filePath)
 
@@ -813,6 +809,11 @@ func handleDocumentSymbol(server *Server, req RPCRequest) {
 	}
 
 	filePath := uriToPath(params.TextDocument.URI)
+	requestedPath, err := filepath.Abs(filePath)
+	if err != nil {
+		log.Printf("Failed to get absolute path for %s: %v", filePath, err)
+		sendError(req.ID, -32600, "Failed to get absolute path for URI", nil)
+	}
 
 	server.mu.Lock()
 	defer server.mu.Unlock()
@@ -828,22 +829,12 @@ func handleDocumentSymbol(server *Server, req RPCRequest) {
 			continue
 		}
 
-		requestedPath, err := filepath.Abs(filePath)
-		if err != nil {
-			log.Printf("Failed to get absolute path for %s: %v", filePath, err)
-			continue
-		}
-
 		if absolutePath != requestedPath {
+			log.Printf("Skipping %v due to unmatched path", entry)
 			continue
 		}
 
-		kind, err := GetLSPSymbolKind(entry.Kind)
-		if err != nil {
-			// Skip symbols with unknown kinds
-			continue
-		}
-
+		kind := GetLSPSymbolKind(entry.Kind)
 		uri := filepathToURI(absolutePath)
 
 		// Retrieve file content

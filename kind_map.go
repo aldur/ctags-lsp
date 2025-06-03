@@ -417,9 +417,9 @@ func GetLSPCompletionKind(ctagsKind string) int {
 }
 
 // GetLSPSymbolKind retrieves the corresponding LSP symbol kind for a given ctags kind string
-func GetLSPSymbolKind(ctagsKind string) (int, error) {
+func GetLSPSymbolKind(ctagsKind string) int {
 	if kind, ok := symbolKindMap[ctagsKind]; ok {
-		return kind, nil
+		return kind
 	}
-	return 0, fmt.Errorf("no symbol kind for: %v", ctagsKind)
+	return SymbolKindVariable // Default to Variable if no match is found
 }
