@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 // LSP Completion Item Kind Constants
 const (
 	CompletionItemKindText          = 1
