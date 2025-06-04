@@ -830,7 +830,7 @@ func handleDocumentSymbol(server *Server, req RPCRequest) {
 		}
 
 		if absolutePath != requestedPath {
-			log.Printf("Skipping %v due to unmatched path", entry)
+			// log.Printf("Skipping %v due to unmatched path", entry)
 			continue
 		}
 
