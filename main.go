@@ -768,7 +768,7 @@ func handleWorkspaceSymbol(server *Server, req RPCRequest) {
 	defer server.mu.Unlock()
 
 	for _, entry := range server.tagEntries {
-		if entry.Name == query {
+		if strings.Contains(entry.Name, query) {
 			kind := GetLSPSymbolKind(entry.Kind)
 			filePath := filepath.Join(server.rootPath, entry.Path)
 			uri := filepathToURI(filePath)
