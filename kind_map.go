@@ -419,5 +419,5 @@ func GetLSPSymbolKind(ctagsKind string) int {
 	if kind, ok := symbolKindMap[ctagsKind]; ok {
 		return kind
 	}
-	return SymbolKindVariable // Default to Variable if no match is found
+	return SymbolKindField // Default if no match is found
 }
