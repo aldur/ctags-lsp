@@ -1123,5 +1123,5 @@ func isIdentifierChar(c rune) bool {
 	return (c >= 'a' && c <= 'z') ||
 		(c >= 'A' && c <= 'Z') ||
 		(c >= '0' && c <= '9') ||
-		c == '_' || c == '$'
+		c == '_' || c == '$' || c == ':'
 }
